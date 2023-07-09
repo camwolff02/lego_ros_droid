@@ -24,7 +24,8 @@ class RobotNode(Node):
             10)
         
     def run_motors(self, msg):
-        phi_l, phi_r = i_kinematics(msg.linear.x, msg.angular.z)
+        phi_l, phi_r = i_kinematics(msg.linear.x * self.max_speed, 
+                                    msg.angular.z * self.max_speed)
         speedl, speedr = -angular_to_linear(phi_l), angular_to_linear(phi_r)
         self.motors.start(speedl, speedr)
 

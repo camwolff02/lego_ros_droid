@@ -21,7 +21,7 @@ teleop_node:
     scale_angular_turbo:
       yaw: 1.0  # [deg/s]
 
-    enable_button: 4 # TODO find
-    enable_turbo_button: 5  # TODO find
+    enable_button: 4 
+    enable_turbo_button: 5
 
     require_enable_button: true  # explicit, not necessary

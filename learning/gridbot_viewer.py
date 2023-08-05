@@ -5,7 +5,7 @@
 # Create a Python main function
 # Create a constant- board_size, and intitialize it with a tuple (5, 5)
 # Create a constant- board_icon, and intialize it to a character/string of your choice. Ex: ‘ - ’ 
-# Create a constant- robot_icon, and inialize it to a character/string of your choice. Ex: ‘ :[]: ’
+# Create a constant- robot_icon, and iniƟalize it to a character/string of your choice. Ex: ‘ :[]: ’
 # Create a constant, robot_start_location, and iniƟalize it to a tuple containing a valid index
 # in regards to the board_size. Ex: (0,0) 
 # Create a local variable within main(), current_robot_location, and iniƟalize it to robot_start_location
@@ -29,60 +29,71 @@
 # Use a generalized functioon for robot movement. You should not need to write a funcƟon for
 # each movement direction.
 # Error check robot movement requests, so as to not move outside the 2D array.
-# Note: Make sure to update current_robot_location each Ɵme the robot is moved
+# Note: Make sure to update current_robot_locaƟon each Ɵme the robot is moved
 #
 # ---------------------------------------------------------------------------------------------------------------
-from enum import Enum
-
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
 
 
-class Option(Enum):
-    LEFT = 1
-    BACKWARD = 2
-    FORWARD = 3 
-    RIGHT = 4
+# hyperparameters
+board_size = (10, 10)
+board_icon = '⬛'
+robot_icon = '🤖'
+robot_start_location = (0, 0)
 
 
-class GridbotController(Node):
+class GridbotViewer(Node):
     def __init__(self):
-        self._publisher = self.create_publisher(Twist, 'cmd_vel', 10) 
+        super().__init__('gridbot_viewer')
+        self.current_robot_location = robot_start_location
+        self.board = self.init_board()
+        
+        self.show_board()
+        self.create_subscription(Twist, 'cmd_vel', self.move_robot, 10)
 
-        while True:
-            try:
-                user_choice = Option(int(input("Enter the number of your choice: ")))
-            except ValueError:
-                print("Invalid input. Please enter a number 0 to 4.")
+    def init_board(self):
+        rows, cols = board_size
+        board = [[board_icon for _ in range(cols)] for _ in range(rows)]
+        row, col = robot_start_location
+        board[row][col] = robot_icon
+        return board
 
-            cmd_vel = Twist()
+    def move_robot(self, cmd_vel):
+        row, col = self.current_robot_location
+        rows, cols = board_size
 
-            match user_choice:
-                case Option.FORWARD:
-                    cmd_vel.linear.x = 1.0
-                case Option.BACKWARD:
-                    cmd_vel.linear.x = -1.0
-                case Option.LEFT:
-                    cmd_vel.linear.y = -1.0
-                case Option.RIGHT:
-                    cmd_vel.linear.y = 1.0
+        new_row, new_col = self.current_robot_location 
+        
+        if int(cmd_vel.linear.x) > 0:  # move up
+            new_row = row - 1
+        elif int(cmd_vel.linear.x) < 0:  # move down
+            new_row = row + 1
+        elif int(cmd_vel.linear.y) > 0:  # move left
+            new_col = col - 1
+        elif int(cmd_vel.linear.y) < 0:  # move right
+            new_col = col + 1
 
-            self._publisher.publish(cmd_vel)
+        if 0 <= new_row < rows and 0 <= new_col < cols:
+            self.board[row][col] = board_icon
+            self.board[new_row][new_col] = robot_icon
+            self.current_robot_location = (new_row, new_col)
+        else:   # Error check
+            print("Robot cannot move outside of the board.")
 
-    def show_menu(self):
-        print("Menu:")
-        print("[1] to move left")
-        print("[2] to move backward")
-        print("[3] to move forward")
-        print("[4] to move right")
-        print("[ctrl+c] to quit")
+        print()
+        self.show_board()
+
+    def show_board(self):  
+        for row in self.board:   # ??
+            print(' '.join(row))
 
 
 def main():
     rclpy.init()
-    node = GridbotController()
-    rclpy.spin_once(node)
+    node = GridbotViewer()
+    rclpy.spin(node)
 
     node.destroy_node()
     rclpy.shutdown()

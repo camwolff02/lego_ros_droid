@@ -15,14 +15,16 @@ class RobotNode(Node):
         self.create_subscription(Twist, '/cmd_vel', self.run_motors, 10)
         
     def run_motors(self, cmd_vel):
+        factor = 4
+
         if int(cmd_vel.linear.x) > 0:  # move up
             self.motors.run_for_seconds(1, -self.max_speed, self.max_speed)
         elif int(cmd_vel.linear.x) < 0:  # move down
             self.motors.run_for_seconds(1, self.max_speed, -self.max_speed)
         elif int(cmd_vel.linear.y) > 0:  # turn left
-            self.motors.run_for_rotations(0.5, self.max_speed, self.max_speed)
+            self.motors.run_for_rotations(0.25, self.max_speed/factor, self.max_speed/factor)
         elif int(cmd_vel.linear.y) < 0:  # turn right
-            self.motors.run_for_rotations(0.5, -self.max_speed, -self.max_speed)
+            self.motors.run_for_rotations(0.25, -self.max_speed/factor, -self.max_speed/factor)
 
         print(f'Driving with: linear x={cmd_vel.linear.x}, angular z={cmd_vel.linear.y}')
         

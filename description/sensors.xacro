@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- ZED2i and Camera Pole ======================================================== -->
+
+    <!-- Camera Pole Properties -->
+    <xacro:property name="camera_pole_width" value="0.03"/>
+    <xacro:property name="camera_pole_height" value="0.6"/>
+    <xacro:property name="camera_pole_mass" value="0.01"/>
+
+    <!-- ZED2i Camera Properties -->
+    <xacro:property name="zed2i_length" value="0.28"/>
+    <xacro:property name="zed2i_width" value="0.03"/>
+    <xacro:property name="zed2i_height" value="0.03"/>
+    <xacro:property name="zed2i_mass" value="0.01"/>
+
+    <!-- camera pole joint -->
+    <joint name="camera_pole_joint" type="fixed">
+        <parent link="chassis_link"/>
+        <child link="camera_pole_link"/>
+        <origin xyz="${camera_pole_width/2} 0 ${chassis_height}"/>
+    </joint>
+
+    <!-- camera pole link -->
+    <link name="camera_pole_link">
+        <visual>
+            <origin xyz="0 0 ${camera_pole_height/2}"/>
+            <geometry>
+                <box size="${camera_pole_width} ${camera_pole_width} ${camera_pole_height}"/> 
+            </geometry>
+             <material name="red"/>
+        </visual>
+
+        <collision>
+            <origin xyz="0 0 ${camera_pole_height/2}"/>
+            <geometry>
+                <box size="${camera_pole_width} ${camera_pole_width} ${camera_pole_height}"/> 
+            </geometry>
+        </collision>
+
+        <xacro:inertial_box mass="${camera_pole_mass}" x="0" y="0" z="${camera_pole_height/2}">
+            <origin xyz="0 0 ${camera_pole_height/2}" rpy="0 0 0"/>
+        </xacro:inertial_box>
+    </link>
+
+    <!-- zed2i camera joint -->
+    <joint name="zed2i_joint" type="fixed">
+        <parent link="camera_pole_link"/>
+        <child link="zed2i_link"/>
+        <origin xyz="0 0 ${camera_pole_height}"/>
+    </joint>
+
+    <!-- zed2i camera link -->
+    <link name="zed2i_link">
+        <visual>
+            <origin xyz="0 0 ${zed2i_height/2}"/>
+            <geometry>
+                <box size="${zed2i_width} ${zed2i_length} ${zed2i_height}"/>
+            </geometry>
+            <material name="black"/>
+        </visual>
+
+        <collision>
+            <origin xyz="0 0 ${zed2i_height/2}"/>
+            <geometry>
+                <box size="${zed2i_width} ${zed2i_length} ${zed2i_height}"/>
+            </geometry>
+        </collision>
+
+        <xacro:inertial_box mass="${zed2i_mass}" x="0" y="0" z="${zed2i_height/2}">
+            <origin xyz="0 0 ${zed2i_height/2}" rpy="0 0 0"/>
+        </xacro:inertial_box>
+    </link>
+
+    <!-- LIDAR ======================================================== -->
+
+    <!-- LIDAR Properties -->
+    <xacro:property name="lidar_height" value="0.041"/>
+    <xacro:property name="lidar_radius" value="0.038"/>
+    <xacro:property name="lidar_mass" value="0.19"/>
+    
+    <!-- LIDAR Joint -->
+    <joint name="lidar_joint" type="fixed">
+        <axis xyz="0 1 0" />
+        <origin xyz="0.9 0 0.25" rpy="0 0 0"/>
+        <parent link="chassis_link"/>
+        <child link="lidar_link"/>
+    </joint>
+
+    <!-- LIDAR Link -->
+    <link name="lidar_link">
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <cylinder length="${lidar_height}" radius="${lidar_radius}"/>
+            </geometry>
+        </collision>
+
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <cylinder length="${lidar_height}" radius="${lidar_radius}"/>
+            </geometry>
+        </visual>
+        
+        <xacro:inertial_cylinder mass="${lidar_mass}" length="${lidar_height}" radius="${lidar_radius}">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+        </xacro:inertial_cylinder>
+    </link>
+
+
+
+</robot>

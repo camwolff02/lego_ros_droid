@@ -20,7 +20,7 @@ def generate_launch_description():
         package = 'teleop_twist_joy',
         executable = 'teleop_node',
         name = 'teleop_node',
-        remappings = [('/cmd_vel', '/diffbot_base_controller/cmd_vel_unstamped')],  # NOTE for testing only
+        # remappings = [('/cmd_vel', '/diffbot_base_controller/cmd_vel_unstamped')],  # NOTE for testing only
         parameters = [joy_params],
     )
 

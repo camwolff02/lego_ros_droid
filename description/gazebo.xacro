@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">]
+    
+    <gazebo reference="chassis">
+        <material>Gazebo/White</material>
+    </gazebo>
+
+    <gazebo reference="left_wheel_link">
+        <material>Gazebo/Blue</material>
+    </gazebo>
+
+    <gazebo reference="right_wheel_link">
+        <material>Gazebo/Blue</material>
+    </gazebo>
+
+    <gazebo reference="caster_wheel_link">
+        <material>Gazebo/Red</material>
+    </gazebo>
+
+    <!-- <gazebo reference="camera_pole_link">
+        <material>Gazebo/Red</material>
+    </gazebo>
+
+    <gazebo reference="zed2i_link">
+        <material>Gazebo/Black</material>
+    </gazebo>
+
+    <gazebo reference="lidar_link">
+        <material>Gazebo/Grey</material>
+    </gazebo> -->
+    
+
+    <!-- TODO change later to use gazebo_ros_control plugin instead -->    
+    <gazebo>
+        <plugin name="gazebo_ros_joint_state_publisher"
+            filename="libgazebo_ros_joint_state_publisher.so">
+            <update_rate>20</update_rate>
+            <joint_name>front_left_wheel_joint</joint_name>
+            <joint_name>front_right_wheel_joint</joint_name>
+            <joint_name>back_left_wheel_joint</joint_name>
+            <joint_name>back_right_wheel_joint</joint_name>
+        </plugin>
+    </gazebo>
+
+    <!-- create link and joint for optical camera frame -->
+    <!-- <joint name="zed2i_optical_joint" type="fixed">
+        <origin xyz = "0 0 0" rpy="-1.571 0 -1.571"/>
+        <parent link="zed2i_link"/>
+        <child link="zed2i_link_optical"/>
+    </joint>
+
+    <link name="zed2i_link_optical"></link> -->
+
+    <!-- Gazebo setup for camera-->
+    <!-- <gazebo reference="zed2i_link">
+        <sensor type="camera" name="zed2i">
+            <update_rate>20</update_rate>
+            <visualize>true</visualize>
+            <camera name="zed">
+                <horizontal_fov>1.3962634</horizontal_fov>
+                <image>
+                    <width>640</width>
+                    <height>480</height>
+                    <format>R8B8G8</format>
+                </image>
+                <clip>
+                    <near>0.02</near>
+                    <far>300</far>
+                </clip>
+                <noise>
+                    <type>gaussian</type>
+                    <mean>0.0</mean>
+                    <stddev>0.007</stddev>
+                </noise>
+            </camera>
+            <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+                <frame_name>camera_link_optical</frame_name>
+                <min_depth>0.1</min_depth>
+                <max_depth>500</max_depth>
+            </plugin>
+        </sensor>
+    </gazebo> -->
+
+
+    <!-- Gazebo setup for LIDAR -->
+    <!-- "gpu_ray" to use GPU, "ray" to use CPU -->
+    <!-- <gazebo reference="lidar_link">
+        <sensor type="gpu_ray" name="lidar"> 
+            <pose>0 0 0 0 0 0</pose>
+            <visualize>true</visualize>
+            <update_rate>40</update_rate>
+            <ray>
+                <scan>
+                    <horizontal>
+                        <samples>720</samples>
+                        <resolution>1</resolution>
+                        <min_angle>-2.35619</min_angle>
+                        <max_angle>2.35619</max_angle>
+                    </horizontal>
+                </scan>
+                <range>
+                    <min>0.2</min>
+                    <max>16</max>
+                    <resolution>0.01</resolution>
+                </range>
+                <noise>
+                    <type>gaussian</type> -->
+                    <!-- TODO - Add correct noise parameters for lidar specs - example is below. -->
+
+                    <!-- Noise parameters based on published spec for Hokuyo laser
+                        achieving "+-30mm" accuracy at range < 10m.  A mean of 0.0m and
+                        stddev of 0.01m will put 99.7% of samples within 0.03m of the true
+                        reading. -->
+                    <!-- <mean>0.0</mean>
+                    <stddev>0.01</stddev>
+                </noise>
+            </ray>
+            <plugin name="lidar_controller" filename="libgazebo_ros_ray_sensor.so">
+                <output_type>sensor_msgs/LaserScan</output_type>
+                <frameName>lidar_link</frameName>
+            </plugin>
+        </sensor>
+    </gazebo> -->
+
+</robot>

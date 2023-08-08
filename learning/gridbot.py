@@ -40,7 +40,6 @@ robot_icon = '🤖'
 robot_start_location = (0, 0)
 
 class Option(Enum):
-    QUIT = 0
     LEFT = 1
     BACKWARD = 2
     FORWARD = 3 
@@ -63,7 +62,7 @@ def init_board():
 
 
 def show_board(board):  # Value of board passed from the while loop in main
-    for row in board:   # ??
+    for row in board:   
         print(' '.join(row))
 
 
@@ -100,7 +99,7 @@ def show_menu():
     print("[2] to move backward")
     print("[3] to move forward")
     print("[4] to move right")
-    print("[0] to quit")
+    print("[ctrl+c] to quit")
 
 
 def main():
@@ -114,16 +113,9 @@ def main():
 
         try:
             user_choice = Option(int(input("Enter the number of your choice: ")))
-            if user_choice == Option.QUIT:
-                print("Ending the program.")
-                break
-            else:
-                current_robot_location = move_robot(board, current_robot_location, user_choice) # Calls function main and passes variables
+            current_robot_location = move_robot(board, current_robot_location, user_choice) # Calls function main and passes variables
         except ValueError:
-            print("Invalid input. Please enter a number 0 to 4.")
-
-    print("Ending board position:")
-    show_board(board)
+            print("Invalid input. Please enter a number 1 to 4.")
 
 if __name__ == "__main__":  
     main()

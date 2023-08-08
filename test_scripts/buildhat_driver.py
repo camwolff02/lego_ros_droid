@@ -19,7 +19,7 @@ class RobotNode(Node):
 
         self.create_subscription(
             Twist, 
-            '/diffbot_base_controller/cmd_vel_unstamped', 
+            '/diff_cont/cmd_vel_unstamped', 
             self.run_motors, 
             10)
         

@@ -14,7 +14,11 @@ class RobotNode(Node):
         self.max_speed = max_speed
         self.curr_speed = 0.0
         self.motors = MotorPair('A', 'B')
+        
+        self.motors.release = False  # Set motor to not release after running
         self.motors.set_default_speed(self.curr_speed)
+        self.motors.plimit(1.0)  # explicityly set to max power
+
         # self.motos.set_speed_unit_rpm(True)
 
         self.create_subscription(
@@ -23,9 +27,9 @@ class RobotNode(Node):
             self.run_motors, 
             10)
         
-    def run_motors(self, msg):
-        phi_l, phi_r = i_kinematics(msg.linear.x * self.max_speed, 
-                                    msg.angular.z * self.max_speed)
+    def run_motors(self, twist_msg):
+        phi_l, phi_r = i_kinematics(twist_msg.linear.x * self.max_speed, 
+                                    twist_msg.angular.z * self.max_speed)
         speedl, speedr = -angular_to_linear(phi_l), angular_to_linear(phi_r)
         self.motors.start(speedl, speedr)
 

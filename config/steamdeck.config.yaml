@@ -15,13 +15,13 @@ teleop_node:
       x: 1.0  # [m/s]
 
     axis_angular:
-      yaw: 2 #3  # rs horizontal
+      yaw: 3  # rs horizontal
     scale_angular:
       yaw: 0.5  # [deg/s]
     scale_angular_turbo:
       yaw: 1.0  # [deg/s]
 
-    enable_button: 9 #4 
-    enable_turbo_button: 10 #5
+    enable_button: 4 
+    enable_turbo_button: 5
 
     require_enable_button: true  # explicit, not necessary

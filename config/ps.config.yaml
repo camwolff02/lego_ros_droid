@@ -1,4 +1,4 @@
-# PS4 config file
+# PS4/PS5 config file
 joy_node:
   ros__parameters:
     device_id: 0

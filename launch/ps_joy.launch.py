@@ -8,7 +8,7 @@ def generate_launch_description():
     pkg_name = 'lego_ros_droid'
 
     joy_params = os.path.join(
-        get_package_share_directory(pkg_name), 'config', 'ps4.config.yaml')
+        get_package_share_directory(pkg_name), 'config', 'ps.config.yaml')
 
     joy_node = Node(
         package = 'joy',

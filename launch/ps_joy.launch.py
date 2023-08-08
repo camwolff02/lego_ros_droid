@@ -19,9 +19,9 @@ def generate_launch_description():
     teleop_node = Node(
         package = 'teleop_twist_joy',
         executable = 'teleop_node',
-        name = 'teleop_node',
-        # remappings = [('/cmd_vel', '/diffbot_base_controller/cmd_vel_unstamped')],  # NOTE for testing only
+        name = 'teleop_node',  # normally teleop_twist_joy_node
         parameters = [joy_params],
+        remappings = [('/cmd_vel', '/diff_cont/cmd_vel_unstamped')],
     )
 
     return LaunchDescription([

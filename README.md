@@ -19,15 +19,15 @@ Setting it up:
     Install humble: https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html
     sudo apt install usbutils
     sudo apt install net-tools
+    sudo apt install ros-humble-ros2-control
+    sudo apt install ros-humble-ros2-controllers
+    sudo apt install ros-humble-gazebo-ros2-control
+
     sudo apt install ros-humble-gazebo-ros
     sudo apt install ros-humble-xacro
-    sudo apt install ros-humble-ros2-control
-    sudo apt install ros-humble-gazebo-ros2-control
     sudo apt install ros-humble-joint-trajectory-controller
     sudo apt install ros-humble-joint-state-broadcaster
     sudo apt install ros-humble-joint-state-publisher-gui
-    sudo apt install ros-humble-
-    sudo apt install ros-humble-
 
 
   Raspberry Pi:

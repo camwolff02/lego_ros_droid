@@ -1,0 +1,7 @@
+string camera_channel
+bool is_gateway
+float32 stopping_dist
+---
+geometry_msgs/Twist cmd_vel
+---
+float32 success

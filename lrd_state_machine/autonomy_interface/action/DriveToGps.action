@@ -1,0 +1,5 @@
+sensor_msgs/NavSatFix gnss_waypoint
+---
+geometry_msgs/Twist cmd_vel
+---
+bool success

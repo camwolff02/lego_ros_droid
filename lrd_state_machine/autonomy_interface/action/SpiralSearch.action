@@ -1,0 +1,5 @@
+string camera_channel
+---
+geometry_msgs/Twist cmd_vel
+---
+float32 success

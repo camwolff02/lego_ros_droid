@@ -12,6 +12,8 @@ Aruco:
   - https://index.ros.org/p/aruco/
   - https://index.ros.org/search/?term=aruco
 
+large motor techincal specifications: https://education.lego.com/v3/assets/blt293eea581807678a/bltb9abb42596a7f1b3/5f8801b5f4c5ce0e93db1587/le_spike-prime_tech-fact-sheet_45602_1hy19.pdf
+
 
 Setting it up:
   Steam Deck:
@@ -29,10 +31,21 @@ Setting it up:
     sudo apt install ros-humble-joint-state-broadcaster 
     sudo apt install ros-humble-joint-state-publisher-gui
 
+    sudo apt install ros-humble-navigation2
+    sudo apt install ros-humble-nav2-bringup
+    sudo apt install ros-humble-turtlebot3-gazebo
+
   Raspberry Pi:
     Install Raspian, set up SSH during install
     Enable serial port, disable serial console (for build hat)
     pip3 install buildhat
 
+      
+
   Install on both:
+
+
+
+TO RUN SIMPLE CAMERA PUB: ros2 run image_tools cam2image
+TO RUN CAMERA SUB: ros2 run rqt_image_view rqt_image_view
 

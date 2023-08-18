@@ -97,8 +97,8 @@ class RobotNode(Node):
 
 def main(args=None):
     robot_info = DiffDriveInfo(
-        wheel_rad=0.045,  # [m]
-        wheel_sep=0.125,  # [m] 
+        wheel_rad=0.044,  # [m]
+        wheel_sep=0.12,  # [m] 
         max_wheel_speed=rpm_to_rad(175.0))  # [rad/s]
 
     rclpy.init(args=args)

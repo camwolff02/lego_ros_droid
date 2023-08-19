@@ -5,16 +5,24 @@
         <material>Gazebo/White</material>
     </gazebo>
 
+
+    <!-- mu used is for rubber on horseshoe-->
     <gazebo reference="left_wheel_link">
         <material>Gazebo/Blue</material>
+        <mu1 value="100.0"/>
+        <mu2 value="100.0"/>
     </gazebo>
 
     <gazebo reference="right_wheel_link">
         <material>Gazebo/Blue</material>
+        <mu1 value="100.0"/>
+        <mu2 value="100.0"/>
     </gazebo>
 
     <gazebo reference="caster_wheel_link">
         <material>Gazebo/Red</material>
+        <mu1 value="0.001"/>
+        <mu2 value="0.001"/>
     </gazebo>
 
     <!-- <gazebo reference="camera_pole_link">

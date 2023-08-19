@@ -6,18 +6,18 @@
 
     <!-- ROVER PROPERTIES -->
     <!-- mass in Kilograms, xyz in meters, rpy in radians -->
-    <xacro:property name="wheel_mass" value="0.0025"/>
+    <xacro:property name="wheel_mass" value="0.030"/>
     <xacro:property name="wheel_radius" value="0.044"/>
     <xacro:property name="wheel_width" value="0.01417"/>
-    <xacro:property name="wheel_dist_from_center" value="{0.125/2}"/>
+    <xacro:property name="wheel_dist_from_center" value="${0.125/2 - 0.01417/2}"/>
     
-    <xacro:property name="caster_wheel_mass" value="0.0025"/>
+    <xacro:property name="caster_wheel_mass" value="0.002"/>
     <xacro:property name="caster_wheel_offset" value="0.135"/>
 
-    <xacro:property name="chassis_mass" value="0.057"/>
+    <xacro:property name="chassis_mass" value="0.660"/>
     <xacro:property name="chassis_width" value="0.105"/>
     <xacro:property name="chassis_length" value="0.19"/>
-    <xacro:property name="chassis_height" value="0.0.065"/>
+    <xacro:property name="chassis_height" value="0.065"/>
 
 
     <!-- BASE LINK -->

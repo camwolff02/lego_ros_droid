@@ -4,7 +4,7 @@ from typing import NamedTuple
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
-from nav_msgs.msg import Odometry
+from std_msgs.msg import Float64MultiArray
 
 from buildhat import Motor, MotorPair
 
@@ -34,7 +34,6 @@ class RobotNode(Node):
         self.motors.set_default_speed(100)
 
         # setup math for kinematics and odometry
-        self.curr_pos = (0.0, 0, 0.0, 0, 0.0)
         self.linear, self.angular = 0.0, 0.0
         self.radius = robot_info.wheel_rad  
         self.separation = robot_info.wheel_sep
@@ -48,26 +47,35 @@ class RobotNode(Node):
             self.run_motors, 
             10)
         
-        self._pub = self.create_publisher(Odometry, 'odom', 10)
-        self._dt = 0.10  # [s]
-        # self.create_timer(self._dt, self.publish_odom)
+        self._wheel_vel_pub = self.create_publisher(Float64MultiArray, '/wheel_vels', 10)
+        timer_period = 0.10  # [s]
+        self.last_time = self.get_clock().now().to_msg()
+        self.create_timer(timer_period, self.publish_wheel_vel)
+
+        self.left_wheel_last_pos = self.motors._leftmotor.get_aposition()
+        self.right_wheel_last_pos = self.motors._rightmotor.get_aposition()
 
         print('ready!')
         
-    def publish_odom(self):
-        msg = Odometry()
-        msg.header.stamp = self.get_clock.now().to_msg()
-        msg.pose.pose.position.x = 0
-        msg.pose.pose.position.y = 0
-        msg.pose.pose.position.z = 0
-        msg.pose.pose.orientation.x = 0
-        msg.pose.pose.orientation.y = 0
-        msg.pose.pose.orientation.z = 0
-        msg.pose.pose.orientation.w = 0
-        self._pub.publish(msg)
+    def publish_wheel_vel(self) -> None:
+        # manually calculate timer period for accuracy
+        current_time = self.get_clock().now().to_msg()
+        dt = (current_time - self.last_time).toSec()
+        self.last_time = current_time
 
+        left_wheel_pos = self.motors._leftmotor.get_aposition()
+        right_wheel_pos = self.motors._rightmotor.get_aposition()
 
+        left_wheel_vel = (self.left_wheel_last_pos - left_wheel_pos) / dt
+        right_wheel_vel = (self.right_wheel_last_pos - right_wheel_pos) / dt
 
+        self.left_wheel_last_pos = left_wheel_vel
+        self.right_wheel_last_pos = right_wheel_pos
+
+        wheel_vels = Float64MultiArray()
+        wheel_vels.data = [left_wheel_vel, right_wheel_vel]
+
+        self._wheel_vel_pub.publish(wheel_vels)
 
     def run_motors(self, twist_msg) -> None:
         """TODO redo math so linear and angular correctly map to wheel velocities"""
@@ -82,17 +90,8 @@ class RobotNode(Node):
         left_percent_max_speed = left_vel * factor
         right_percent_max_speed = right_vel * factor
 
-        # record wheel velocity for odometry
-        left_wheel_vel = left_percent_max_speed * self.max_wheel_speed
-        right_wheel_vel = right_percent_max_speed * self.max_wheel_speed
-
         self.motors.start(-left_percent_max_speed, right_percent_max_speed)
         print(f'Driving with: l={left_percent_max_speed}, r={right_percent_max_speed}')
-
-
-        # calculate and publish odometry
-        self.linear, self.angular = diffdrive_fk(left_wheel_vel, right_wheel_vel, self.radius, self.separation)
-        # print(f'Driving with: linear={linear}, angular={angular}')
 
 
 def main(args=None):
@@ -103,7 +102,10 @@ def main(args=None):
 
     rclpy.init(args=args)
     node = RobotNode(robot_info)
-    rclpy.spin(node)
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
 
     node.destroy_node()
     rclpy.shutdown()

@@ -1,0 +1,5 @@
+diff_drive_odom:
+  ros__parameters:
+    radius: 0.044  # [m]
+    separation: 0.12  # [m]
+    max_wheel_speed: 14.14  # [rad/s]

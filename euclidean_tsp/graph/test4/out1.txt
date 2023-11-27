@@ -1,0 +1,2 @@
+Directed Eulerian cycle:
+0, 4, 3, 4, 1, 2, 0

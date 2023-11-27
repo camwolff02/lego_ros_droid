@@ -1,0 +1,2 @@
+Vertices in 1-cores:
+0, 1

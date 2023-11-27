@@ -1,0 +1,4 @@
+Vertices in 1-cores:
+0, 1, 2, 3, 4
+Vertices in 2-cores:
+0, 1, 2, 3, 4

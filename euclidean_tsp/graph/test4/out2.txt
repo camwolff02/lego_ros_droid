@@ -1,0 +1,2 @@
+Directed Eulerian path:
+0, 1

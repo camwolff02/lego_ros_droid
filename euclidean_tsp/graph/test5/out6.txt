@@ -1,0 +1,6 @@
+Vertices in 1-cores:
+0, 1, 6, 7, 8, 9
+Vertices in 2-cores:
+6, 7, 8, 9
+Vertices in 3-cores:
+6, 7, 8, 9

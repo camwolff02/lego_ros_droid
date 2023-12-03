@@ -100,8 +100,8 @@ def min_spanning_tree(graph: Graph) -> list[tuple[V, V]]:
     ]
     ascending: list[tuple[V, V, float]] = sorted(edges, key=lambda x: x[2])
     # NOTE: ERROR Too many edges
-    for x in ascending:
-        print(f'({x[0][0]}, {x[1][0]}, {x[2]})', end=', ')
+    # for x in ascending:
+    #     print(f'({x[0][0]}, {x[1][0]}, {x[2]})', end=', ')
 
     for u, v, _ in ascending:  # for all e=(u,v) in A do
         # The cut property, if e is the edge of strictly minimum weight in the

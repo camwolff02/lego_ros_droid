@@ -6,7 +6,9 @@ import sys
 from typing import Optional
 
 sys.path.insert(1, '/Users/camwolff/Development/local/euclidean_tsp/graph')
-from tsp import find_eulerian_path, find_s_and_t
+sys.path.insert(1, '/home/cam/Development/ros-workspaces/ros2_ws/src/lego_ros_droid/euclidean_tsp/graph/')
+
+from algo import find_eulerian_path, find_s_and_t
 from graph import Graph
 # from scripts.graphviz import visualize
 

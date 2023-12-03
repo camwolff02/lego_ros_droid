@@ -6,9 +6,11 @@ import sys
 from typing import Optional
 
 sys.path.insert(1, '/Users/camwolff/Development/local/euclidean_tsp/graph')
+sys.path.insert(1, '/home/cam/Development/ros-workspaces/ros2_ws/src/lego_ros_droid/euclidean_tsp/graph/')
+
 from graph import Graph
 # from scripts.graphviz import visualize
-from tsp import k_cores
+from algo import k_cores
 
 
 def load_graph_from_edges(filename: str,

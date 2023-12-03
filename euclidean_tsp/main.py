@@ -16,7 +16,7 @@ from tsp import brute_force_tsp, approx_min_path
 PRECISION: int = 10**8
 DEG_TO_M: float = 111_100
 
-ENABLE_BRUTE_FORCE: bool = False
+ENABLE_BRUTE_FORCE: bool = True
 ENABLE_APPROXIMATION: bool = True
 
 

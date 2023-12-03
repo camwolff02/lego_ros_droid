@@ -48,7 +48,7 @@ def find_eulerian_path(G: Graph, s: V, t: Optional[V] = None) -> list[V]:
         # remove any edge (s, v) from G
         v = random.choice(tuple(G.successors(s).keys()))
         G.remove_edge((s, v))
-        
+
         P: list = find_eulerian_path(G, v, t)
         if G.deg(s) == 0:  # deg(s) = in_deg(s) + out_deg(s)
             return [s] + P

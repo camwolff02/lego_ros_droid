@@ -17,7 +17,7 @@ PRECISION: int = 10**8
 DEG_TO_M: float = 111_100
 
 ENABLE_BRUTE_FORCE: bool = True
-ENABLE_APPROXIMATION: bool = True
+ENABLE_APPROXIMATION: bool = False
 
 
 class Vertex(NamedTuple):

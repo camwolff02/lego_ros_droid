@@ -15,7 +15,7 @@ V = TypeVar('V', bound=Hashable)
 
 def brute_force_tsp(graph: Graph, source: V) -> tuple[float, list[V]]:
     """Brute force solution for finding the shortest Hamiltonian path in a
-    weighted graph. Practical for graphs with |V| <= 11. Runs in O(n!)
+    weighted graph. Practical for graphs with |V| <= 11. Runs in O(|V|!)
 
     :param graph: An undirected, weighted graph
     :param source: The starting vertex for the Hamiltonian path

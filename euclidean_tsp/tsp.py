@@ -3,6 +3,7 @@ Algorithm for finding the shortest Hamiltonian Path in a weighted graph
 """
 import itertools
 import math
+import multiprocessing as mp
 from typing import TypeVar, Hashable
 
 from scipy.cluster.hierarchy import DisjointSet  # type: ignore
@@ -25,7 +26,7 @@ def brute_force_tsp(graph: Graph, source: V) -> tuple[float, list[V]]:
     # push all nodes except source into bundle
     nodes: list[V] = [node for node in graph.vertices if node != source]
 
-    shortest_weight: float = math.inf
+    smallest_weight: float = math.inf
     path = []
 
     # generating permutations and tracking the minimum cost
@@ -39,11 +40,82 @@ def brute_force_tsp(graph: Graph, source: V) -> tuple[float, list[V]]:
             node_j = node_i
             path_.append(node_j)
 
-        if path_weight < shortest_weight:
-            shortest_weight = path_weight
+        if path_weight < smallest_weight:
+            smallest_weight = path_weight
             path = path_
 
-    return shortest_weight, path
+    return smallest_weight, path
+
+
+def calc_path_weight(nodes: tuple[V, ...], source: V, graph: Graph
+                     ) -> tuple[float, list[V]]:
+    """Calculates the weight of a path naively
+
+    :param nodes: nodes of the path, minus the source
+    :param source: starting vertex of path
+    :param graph: graph where path exists
+    :return: the weight of the path, and the path itself
+    """
+    path_weight: float = 0.0
+
+    node_j: V = source
+    path = [node_j]
+    for node_i in nodes:
+        path_weight += graph.weight((node_i, node_j))
+        node_j = node_i
+        path.append(node_j)
+
+    return path_weight, path
+
+
+def parallel_naive_tsp(graph: Graph, source: V, num_processes: int = 5
+                       ) -> tuple[float, list[V]]:
+    """Parallelized naive solution for finding the shortest Hamiltonian path in
+    a weighted graph. Practical for graphs with |V| <= 11. Runs in O(|V|!)
+
+    :param graph: An undirected, weighted graph
+    :param source: The starting vertex for the Hamiltonian path
+    :return: The weight of the optimal path, and the path itself
+    """
+
+    # push all nodes except source into bundle
+    nodes: list[V] = [node for node in graph.vertices if node != source]
+
+    smallest_weight: float = math.inf
+    shortest_path = []
+
+    # generating permutations and sorting into buckets of jobs
+    buckets: list[list[tuple[V, ...]]] = [
+        [] for _ in range(num_processes)]
+
+    i: int = -1
+    for nodes_ in itertools.permutations(nodes):
+        buckets[(i := i+1) % num_processes].append(nodes_)
+
+    # run all jobs to calculate weights and paths
+    results: mp.Queue[tuple[float, list[V]]] = mp.Queue()
+    processes: list[mp.Process] = []
+
+    for jobs in buckets:
+        def run_jobs(jobs: list[tuple[V, ...]], results: mp.Queue):
+            for job in jobs:
+                weight, path_ = calc_path_weight(job, source, graph)
+                results.put((weight, path_))
+
+        p = mp.Process(target=run_jobs, args=(jobs, results))
+        p.start()
+
+    for p in processes:
+        p.join()
+
+    # find the minimum weight of all the paths
+    while not results.empty():
+        weight, path = results.get()
+        if weight < smallest_weight:
+            smallest_weight = weight
+            shortest_path = path
+
+    return smallest_weight, shortest_path
 
 
 def approx_min_path(graph: Graph, source: V, find_weight: bool = True
@@ -62,11 +134,12 @@ def approx_min_path(graph: Graph, source: V, find_weight: bool = True
     tree: list[tuple[V, V]] = min_spanning_tree(graph)
     explored: set[V] = set()  # for all v in V, let v be "unexplored"
 
+    # perform re-rooting of MST, to root tree at source
+    mst_graph: Graph = Graph(tree)
+
     # let s be the source vertex in V, and P be the vertices of Explore(T, s),
     # sorted in ascending order by previsit number
-    # for edge in tree:
-    #     print(edge[0][0], edge[1][0])
-    path: list[V] = explore(Graph(tree), source, explored)
+    path: list[V] = explore(mst_graph, source, explored)
 
     # If necessary, finds the weight of the Hamiltonian path
     weight = 0.0
@@ -83,30 +156,29 @@ def approx_min_path(graph: Graph, source: V, find_weight: bool = True
 def min_spanning_tree(graph: Graph) -> list[tuple[V, V]]:
     """Implementation of Kruskal's Algorithm
     Finds the minimum spanning tree of G=(V,E)
+    O(|E|log(|E|))
 
     :param graph: A connected, weighted graph G
     :return: A minimum spanning tree of G
     """
     # let T be an empty tree and S be an empty dijoint set
     tree: list[tuple[V, V]] = []
-    disj_set = DisjointSet()
+    disj_set: DisjointSet[set[V]] = DisjointSet()
 
     for v in graph.vertices:  # for all v in V do
         disj_set.add(v)  # make a new subset containing v in S
 
     # let A be E, sorted in increasing order by weight
-    edges: list[tuple[V, V, float]] = [
-        (key[0], key[1], val) for key, val in graph.edges.items()
-    ]
-    ascending: list[tuple[V, V, float]] = sorted(edges, key=lambda x: x[2])
-    # NOTE: ERROR Too many edges
-    # for x in ascending:
-    #     print(f'({x[0][0]}, {x[1][0]}, {x[2]})', end=', ')
+    edges: list[tuple[frozenset[V], float]] = sorted([
+        (frozenset(key), val) for key, val in graph.edges.items()
+    ], key=lambda x: x[1])
 
-    for u, v, _ in ascending:  # for all e=(u,v) in A do
+    for edge, _ in edges:  # for all e=(u,v) in A do
+        u, v = edge
+
         # The cut property, if e is the edge of strictly minimum weight in the
         # cut set, then e must be in every MST
-        if disj_set.connected(u, v):  # if u and v in different subsets in S
+        if not disj_set.connected(u, v):  # if u and v are in different subsets
             disj_set.merge(u, v)  # Union the subsets containing u and v in S
             tree.append((u, v))  # Add e to T
 

@@ -28,10 +28,11 @@ class Graph(Generic[V]):
     NOTE: Instantiation is O(|V|+|E|). All other operations are O(1), unless
     otherwise specified.
     """
-
     _adj_list: dict[V, dict[V, float]]  # maps vertices adj. vertices w/ weight
     _vertices: set[V]  # set of all vertices
-    _edges: dict[tuple[V, V], float]  # map edges to their weight
+    _dir_edges: dict[tuple[V, V], float]  # map directed edges to weight
+    _und_edges: dict[frozenset[V], float]  # map undirected edges to weight
+
     _graph_has_changed: bool  # true if we need to update string graph
     _in_degrees: dict[V, int]  # map vertices to their in-degrees
 
@@ -40,7 +41,7 @@ class Graph(Generic[V]):
     str_graph: str
 
     def __init__(self,
-                 edges: Collection[tuple],
+                 edges: Collection[tuple[V, V] | tuple[V, V, float]],
                  vertices: Optional[Collection[V]] = None,
                  directed: bool = False,
                  weighted: bool = False):
@@ -50,7 +51,8 @@ class Graph(Generic[V]):
         self._in_degrees = {}
 
         self._vertices = set() if vertices is None else set(vertices)
-        self._edges = {}
+        self._dir_edges = {}
+        self._und_edges = {}
 
         self._graph_has_changed = True
 
@@ -102,16 +104,22 @@ class Graph(Generic[V]):
         return self._vertices
 
     @property
-    def edges(self) -> dict[tuple[V, V], float]:
-        """Returns a dictionary of all edges mapped to their weights."""
-        return self._edges
+    def edges(self) -> dict[tuple[V, V], float] | dict[frozenset[V], float]:
+        """Returns a dictionary of all edges mapped to their weights.
+        Dictionary keys are tuples if directed, and frozenset if undirected."""
+        if self.directed:
+            return self._dir_edges
+        else:
+            return self._und_edges
 
-    def add_edge(self, edge: tuple) -> None:
+    def add_edge(self, edge: frozenset[V] | tuple[V, V] | tuple[V, V, float]
+                 ) -> None:
         """Adds the given edge to the graph. An edge is a tuple with length 2
         (unweighted), or a tuple with length 3 (weighted)."""
         self._graph_has_changed = True
-        vertex_u, vertex_v = edge[0], edge[1]
-        weight = int(edge[2]) if len(edge) > 2 else 1
+        vertex_u: V = (edge_ := tuple(edge))[0]  # type: ignore
+        vertex_v: V = edge_[1]  # type: ignore
+        weight = float(edge_[2]) if len(edge_) > 2 else 1.0  # type: ignore
 
         # initialize degrees and increase the in degree of v
         if vertex_u not in self._in_degrees:
@@ -122,7 +130,8 @@ class Graph(Generic[V]):
         self._in_degrees[vertex_v] += 1
 
         # add edge to set of edge weights
-        self._edges[(vertex_u, vertex_v)] = weight
+        self._dir_edges[(vertex_u, vertex_v)] = weight
+        self._und_edges[frozenset((vertex_u, vertex_v))] = weight
 
         # add v to the list of vertices that are adjacent to u
         if vertex_u in self._adj_list:
@@ -137,16 +146,16 @@ class Graph(Generic[V]):
             else:
                 self._adj_list[vertex_v] = {vertex_u: weight}
 
-    def remove_edge(self, edge: tuple[V, V]) -> None:
+    def remove_edge(self, edge: tuple[V, V] | frozenset[V]) -> None:
         """Removes the given edge from the graph."""
         self._graph_has_changed = True
         vertex_u, vertex_v = edge
 
         # remove edge from set of edges
-        if edge in self._edges:
-            del self._edges[edge]
-        if not self.directed and (vertex_u, vertex_v) in self._edges:
-            del self._edges[edge]
+        if edge in self._dir_edges:
+            del self._dir_edges[(vertex_u, vertex_v)]
+        if edge in self._und_edges:
+            del self._und_edges[frozenset(edge)]
 
         # remove edge from adjacency list
         if self.adjacent(vertex_u, vertex_v):
@@ -155,7 +164,7 @@ class Graph(Generic[V]):
             del self._adj_list[vertex_v][vertex_u]
 
         # update in-degrees
-        self._in_degrees[edge[1]] -= 1
+        self._in_degrees[vertex_v] -= 1
 
     def remove_vertex(self, vertex_u: V) -> None:
         """Removes the given vertex from the graph. Worst time O(|V|)."""

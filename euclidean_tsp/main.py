@@ -1,9 +1,8 @@
 """
 Loads GNSS Waypoints from filename command line argument. Constructs a
 weighted graph from waypoints, with weights corresponding to their euclidean
-distance. Uses the TSP Algorithm to find the shortest Hamiltonian path in the
-graph. Uses Kruskal's Algorithm to find a 2-approximation to the shortest
-Hamiltonian path. Benchmarks both algorithms and prints results
+distance. Uses various lgorithms to find the shortest Hamiltonian path in the
+graph, or an approximation. Benchmarks all algorithms and prints results
 """
 from collections import OrderedDict
 import math

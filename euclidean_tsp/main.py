@@ -58,7 +58,7 @@ def construct_graph(filename: str) -> Graph:
 
 
 def main() -> None:
-    """Loads graph, runs and benchmarks both algorithms"""
+    """Loads graph, runs and benchmarks all algorithms"""
     filename: str = sys.argv[1] if len(sys.argv) > 1 else 'in1.txt'
     graph: Graph = construct_graph(filename)
 

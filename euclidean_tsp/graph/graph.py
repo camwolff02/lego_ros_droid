@@ -133,6 +133,10 @@ class Graph(Generic[V]):
         self._dir_edges[(vertex_u, vertex_v)] = weight
         self._und_edges[frozenset((vertex_u, vertex_v))] = weight
 
+        # add vertices to set of all vertices
+        self._vertices.add(vertex_u)
+        self._vertices.add(vertex_v)
+
         # add v to the list of vertices that are adjacent to u
         if vertex_u in self._adj_list:
             self._adj_list[vertex_u][vertex_v] = weight

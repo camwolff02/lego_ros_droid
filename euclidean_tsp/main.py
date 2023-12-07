@@ -17,6 +17,8 @@ from tsp import (
     approx_min_path
 )
 
+# boolean flags to enable running of algorithms
+# order: brute force, approximation, parallelization
 ENABLE_ALGOS: tuple[bool, ...] = (True, True, True)
 
 PRECISION: int = 10**8
